@@ -11,3 +11,48 @@ kernel = np.array([[0, -1, 0],
 sharpened = cv2.filter2D(image, -1, kernel)
 
 cv2.imwrite('/mnt/data/sharpened_p3.jpg', sharpened)
+
+
+
+class Wav2Lip(nn.Module):
+    def __init__(self):
+        super(Wav2Lip, self).__init__()
+
+        self.face_encoder_blocks = nn.ModuleList([
+            nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=1, padding=3)),  # 1024x1024
+
+            nn.Sequential(Conv2d(16, 32, kernel_size=3, stride=2, padding=1),  # 512x512
+            Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(32, 64, kernel_size=3, stride=2, padding=1),  # 256x256
+            Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(64, 128, kernel_size=3, stride=2, padding=1),  # 128x128
+            Conv2d(128, 128, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(128, 128, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(128, 256, kernel_size=3, stride=2, padding=1),  # 64x64
+            Conv2d(256, 256, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(256, 256, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(256, 512, kernel_size=3, stride=2, padding=1),  # 32x32
+            Conv2d(512, 512, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=2, padding=1),  # 16x16
+            Conv2d(512, 512, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=2, padding=1),  # 8x8
+            Conv2d(512, 512, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=2, padding=1),  # 4x4
+            Conv2d(512, 512, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=2, padding=1),  # 2x2
+            Conv2d(512, 512, kernel_size=3, stride=1, padding=1, residual=True)),
+
+            nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=1, padding=0)),  # 1x1
+        ])
+
